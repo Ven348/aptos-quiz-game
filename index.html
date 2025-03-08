@@ -3,36 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aptos Quiz Game</title>
+    <title>Aptos KBC Quiz</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="game-container">
-        <h1>Aptos Quiz Game</h1>
+        <h1>Aptos KBC Quiz</h1>
         
-        <div id="question-container">
-            <div id="question"></div>
-            <div id="answers">
-                <button class="answer" id="answer1"></button>
-                <button class="answer" id="answer2"></button>
-                <button class="answer" id="answer3"></button>
-                <button class="answer" id="answer4"></button>
-            </div>
-            <div id="timer">Time left: <span id="time">30</span> seconds</div>
+        <!-- Dashboard -->
+        <div id="dashboard">
+            <h2>User Dashboard</h2>
+            <p>Score: <span id="score">0</span></p>
+            <p>Questions Answered: <span id="questionsAnswered">0</span></p>
         </div>
 
-        <div id="scoreboard">
-            <h2>Score: <span id="score">0</span></h2>
+        <!-- Quiz Container -->
+        <div id="quiz-container">
+            <div id="question-container">
+                <div id="question"></div>
+                <div id="answers">
+                    <button class="answer" id="answer1"></button>
+                    <button class="answer" id="answer2"></button>
+                    <button class="answer" id="answer3"></button>
+                    <button class="answer" id="answer4"></button>
+                </div>
+                <div id="timer">Time left: <span id="time">30</span> seconds</div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="result" style="display: none;">
+                <h2 id="result-text"></h2>
+                <button onclick="nextQuestion()">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div id="leaderboard">
             <h3>Leaderboard</h3>
-            <ol id="leaderboard">
-                <!-- Leaderboard will be updated dynamically -->
+            <ol id="leaderboard-list">
+                <!-- Leaderboard will be dynamically updated -->
             </ol>
         </div>
 
-        <div id="result">
-            <h2 id="result-text"></h2>
-            <button onclick="nextQuestion()">Next Question</button>
-        </div>
     </div>
 
     <script src="quiz.js"></script>
