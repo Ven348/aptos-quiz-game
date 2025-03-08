@@ -1,58 +1,108 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+// Global variables
+let score = 0;
+let currentQuestion = 0;
+let timer;
+let timeLeft = 30;
+let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+
+// Sample questions (you can replace this with real API integration)
+const questions = [
+    {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+        correct: 2,
+    },
+    {
+        question: "What is 2 + 2?",
+        options: ["3", "4", "5", "6"],
+        correct: 1,
+    },
+    {
+        question: "Who wrote '1984'?",
+        options: ["Aldous Huxley", "George Orwell", "J.K. Rowling", "Mark Twain"],
+        correct: 1,
+    }
+];
+
+function nextQuestion() {
+    if (currentQuestion < questions.length) {
+        loadQuestion(questions[currentQuestion]);
+        currentQuestion++;
+    } else {
+        endGame();
+    }
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f1f1f1;
-    color: #333;
-    text-align: center;
+function loadQuestion(questionObj) {
+    // Load question text
+    document.getElementById('question').innerText = questionObj.question;
+    const options = questionObj.options;
+    
+    // Load answer options dynamically
+    options.forEach((option, index) => {
+        document.getElementById(`answer${index + 1}`).innerText = option;
+        document.getElementById(`answer${index + 1}`).onclick = () => checkAnswer(index, questionObj.correct);
+    });
+
+    timeLeft = 30;
+    document.getElementById('time').innerText = timeLeft;
+    startTimer();
 }
 
-#game-container {
-    margin-top: 50px;
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        score++;
+        document.getElementById('result-text').innerText = "Correct!";
+    } else {
+        document.getElementById('result-text').innerText = "Wrong!";
+    }
+
+    // Update dashboard
+    document.getElementById('score').innerText = score;
+    document.getElementById('questionsAnswered').innerText = currentQuestion + 1;
+
+    // Show result
+    document.getElementById('result').style.display = 'block';
 }
 
-#question-container {
-    margin-bottom: 20px;
+function startTimer() {
+    timer = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            document.getElementById('time').innerText = timeLeft;
+        } else {
+            clearInterval(timer);
+            document.getElementById('result-text').innerText = "Time's up!";
+            document.getElementById('result').style.display = 'block';
+        }
+    }, 1000);
 }
 
-#answers button {
-    display: block;
-    width: 200px;
-    margin: 10px auto;
-    padding: 15px;
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    border-radius: 5px;
+function endGame() {
+    // Save score to leaderboard
+    leaderboard.push({ score: score });
+    leaderboard.sort((a, b) => b.score - a.score);
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
+    // Update leaderboard
+    updateLeaderboard();
+
+    // Reset for new game
+    score = 0;
+    currentQuestion = 0;
+    document.getElementById('score').innerText = score;
+    document.getElementById('result').style.display = 'none';
 }
 
-#answers button:hover {
-    background-color: #45a049;
+function updateLeaderboard() {
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardList.innerHTML = '';
+    leaderboard.forEach((entry, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerText = `Player ${index + 1}: ${entry.score} points`;
+        leaderboardList.appendChild(listItem);
+    });
 }
 
-#dashboard, #quiz-container, #leaderboard {
-    margin: 20px;
-}
-
-#timer {
-    font-size: 20px;
-    margin-top: 10px;
-}
-
-#result {
-    display: none;
-    margin-top: 30px;
-}
-
-#leaderboard {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
-}
+// Start the first question
+nextQuestion();
